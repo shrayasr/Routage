@@ -6,4 +6,4 @@ decorated with the `[Route(...)]` attribute
 
 ## Demo
 
-![Imgur](http://i.imgur.com/eAcQkD6.gifv)
+![Routage demo gif](http://i.imgur.com/eAcQkD6.gif)
