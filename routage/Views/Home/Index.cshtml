@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+
+<head>
+    <title>Routage</title>
+    <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css" />
+</head>
+
+<body>
+
+    <div class="container" ng-app="app" ng-controller="controller">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Routage <small>helps you quickly find your routes in an ASP MVC project</small></h1>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-12">
+                <input autofocus placeholder="Start typing a route" class="form-control" ng-model="input" type="text"/>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        <tr ng-repeat="result in results track by $index">
+                            <td ng-bind-html="result"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.min.js"></script>
+    <script src="https://rawgit.com/mattyork/fuzzy/master/fuzzy-min.js"></script>
+
+    <script>
+
+        angular.module("app", [])
+        .controller("controller", ["$scope", "$http", "$sce", function ($scope, $http, $sce) {
+
+            var list = [];
+
+            initialize = function () {
+                $http
+                    .get("/routes")
+                    .then(function (response) {
+                        list = response.data;
+                    });
+            };
+
+            $scope.$watch("input", function (newVal, oldVal) {
+                if (newVal && !angular.equals(newVal, oldVal)) {
+                    var res = fuzzy
+                                .filter($scope.input, list, { pre: "<b>", post: "</b>" })
+                                .map(function (item) { return $sce.trustAsHtml(item.string); });
+
+                    $scope.results = res;
+                }
+                else {
+                    $scope.results = [];
+                }
+            });
+
+            initialize();
+
+        }]);
+    </script>
+
+</body>
+
