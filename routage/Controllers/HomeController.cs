@@ -16,10 +16,7 @@ namespace routage.Controllers
         public ActionResult GetRoutes()
         {
             var routesIndexer = new RoutesIndexer();
-            var routes = routesIndexer
-                            .GetRoutes()
-                            .Select(r => r.Route);
-            return Json(routes, JsonRequestBehavior.AllowGet);
+            return Json(routesIndexer.GetRoutes(), JsonRequestBehavior.AllowGet);
         }
     }
 }

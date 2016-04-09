@@ -23,9 +23,23 @@
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Route</th>
+                            <th>Method</th>
+                            <th>Function Name</th>
+                            <th>Class Name</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr ng-repeat="result in results track by $index">
-                            <td ng-bind-html="result"></td>
+                            <td ng-bind-html="result.Route"></td>
+                            <td><code>{{ result.Method }}</code></td>
+                            <td><code>{{ result.FunctionName }}</code></td>
+                            <td><code>{{ result.ClassName }}</code></td>
+                        </tr>
+                        <tr ng-if="results.length == 0">
+                            <td colspan="4" class="text-center">No Matches</td>
                         </tr>
                     </tbody>
                 </table>
@@ -43,6 +57,11 @@
         .controller("controller", ["$scope", "$http", "$sce", function ($scope, $http, $sce) {
 
             var list = [];
+            var options = {
+                pre: "<b>",
+                post: "</b>",
+                extract: function (el) { return el.Route; }
+            };
 
             initialize = function () {
                 $http
@@ -55,8 +74,12 @@
             $scope.$watch("input", function (newVal, oldVal) {
                 if (newVal && !angular.equals(newVal, oldVal)) {
                     var res = fuzzy
-                                .filter($scope.input, list, { pre: "<b>", post: "</b>" })
-                                .map(function (item) { return $sce.trustAsHtml(item.string); });
+                                .filter($scope.input, list, options)
+                                .map(function (item) {
+                                    var match = angular.copy(item.original);
+                                    match.Route = $sce.trustAsHtml(item.string);
+                                    return match;
+                                });
 
                     $scope.results = res;
                 }
