@@ -1,4 +1,5 @@
 ﻿using routage.Analysis;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace routage.Controllers
@@ -15,7 +16,10 @@ namespace routage.Controllers
         public ActionResult GetRoutes()
         {
             var routesIndexer = new RoutesIndexer();
-            return Json(routesIndexer.Index(), JsonRequestBehavior.AllowGet);
+            var routes = routesIndexer
+                            .GetRoutes()
+                            .Select(r => r.Route);
+            return Json(routes, JsonRequestBehavior.AllowGet);
         }
     }
 }
